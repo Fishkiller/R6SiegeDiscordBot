@@ -7,7 +7,10 @@
     "discord" : "0.x.x"
  },
   "engines": {
-    "node": "0.10.x",
-    "npm": "1.3.x"
+    "node": "7.4.x",
+    "npm": "4.0.x"
+  },
+  "scripts": {
+  	"start": "node Ugly-Bot.js"
   }
 }
