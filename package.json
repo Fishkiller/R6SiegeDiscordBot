@@ -4,7 +4,8 @@
   "dependencies": {
     "lodash": "4.x.x",
     "snoocore": "3.x.x",
-    "discord.js" : "11.x.x"
+    "discord.js" : "11.x.x",
+    "request" : "2.x.x"
  },
   "engines": {
     "node": "7.4.x",
