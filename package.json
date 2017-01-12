@@ -11,8 +11,5 @@
   "engines": {
     "node": "7.4.x",
     "npm": "4.0.x"
-  },
-  "scripts": {
-  	"start": "node Ugly-Bot.js"
   }
 }
