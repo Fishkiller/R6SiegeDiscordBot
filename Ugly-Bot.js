@@ -294,4 +294,10 @@ bot.on('message', message => {
 	}
 });
 
+var app = express();
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
+
 bot.login("MjY4NjE5MDE1NTYyMTk5MDQw.C1dafA.UUx1lladCud7FNQsrbgztCE4VFk");
