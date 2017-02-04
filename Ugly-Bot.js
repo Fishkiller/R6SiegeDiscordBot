@@ -45,7 +45,16 @@ var statsFunctions = {
 			if (err) {
 				return;
 			}
-			var response = JSON.parse(body);
+
+			var response;
+
+			try {
+				response = JSON.parse(body);
+			} catch (e) {
+				msg.reply("Sorry, problems with Statistic Server");
+
+			    return;
+			}
 			var player = response.player;
 			
 			if(player) {
@@ -75,7 +84,16 @@ var statsFunctions = {
 				console.log(err);
 				return;
 			}
-			var response = JSON.parse(body);
+
+			var response;
+
+			try {
+				response = JSON.parse(body);
+			} catch (e) {
+				msg.reply("Sorry, problems with Statistic Server");
+
+			    return;
+			}
 
 			var seasonKeys = Object.keys(response.seasons);
 			var player = response.seasons[seasonKeys[0]].emea;
