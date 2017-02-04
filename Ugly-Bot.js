@@ -107,27 +107,46 @@ var statsFunctions = {
 		});
 	},
 	"operator" : function(bot,msg,suffix, args) {
-		if (args.length < 2) {
-			msg.reply("Missed required parameters");
-
-			return;
-		}
 
 		var sortOptions = {"kd" : "Kills/Deaths", "wl" : "Wins/Losses", "playtime" : "Playing Time"};
 		
 		if (args[0] == "operator_rating") {
-			if (!sortOptions[args[1]]) {
-				msg.reply("Incorrect sorting option");
+
+			if (args.length < 2) {
+				msg.reply("Missed required sorting. You can use kd / wl / playtime.");
 
 				return;
 			}
+
+			if (!sortOptions[args[1]]) {
+				msg.reply("Incorrect sorting option. You can use kd / wl / playtime.");
+
+				return;
+			}
+		} else if (args[0] == "operator") {
+			if (args.length < 2) {
+				msg.reply("Missed operator. Please, write operator's name.");
+
+				return;
+			}
+
 		}
 
 		require("request")("https://api.r6stats.com/api/v1/players/"+suffix+"/operators?platform=uplay", function(err,res,body) {
 			if (err) {
 				return;
 			}
-			var response = JSON.parse(body);
+
+			var response;
+
+			try {
+				response = JSON.parse(body);
+			} catch (e) {
+				msg.reply("Sorry, problems with Statistic Server");
+
+			    return;
+			}
+			
 			var operators = response.operator_records;
 
 			if (args[0] == "operator") {
