@@ -90,8 +90,6 @@ var statsFunctions = {
 			try {
 				response = JSON.parse(body);
 			} catch (e) {
-				msg.reply("Sorry, problems with Statistic Server");
-
 			    return;
 			}
 
@@ -164,7 +162,7 @@ var statsFunctions = {
 
 			    return;
 			}
-			
+
 			var operators = response.operator_records;
 
 			if (args[0] == "operator") {
