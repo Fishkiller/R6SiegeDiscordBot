@@ -51,7 +51,7 @@ var statsFunctions = {
 			try {
 				response = JSON.parse(body);
 			} catch (e) {
-				msg.reply("Sorry, problems with Statistic Server");
+				msg.reply("Sorry, problems with Statistics Server");
 
 			    return;
 			}
@@ -308,8 +308,8 @@ bot.on('message', message => {
 	if (!message.content.startsWith(prefix)) {
 		return;
 	}
-
-	let args = message.content.split(" ");
+	var user_command = message.content.replace(/\s\s+/g, ' ');
+	let args = user_command.split(" ");
 	var command_name = args[0].slice(1);
   console.log(command_name);
   console.log(args);
