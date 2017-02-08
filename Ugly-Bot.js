@@ -94,7 +94,7 @@ var statsFunctions = {
 			}
 
 			var seasonKeys = Object.keys(response.seasons);
-			var player = response.seasons[seasonKeys[0]].emea;
+			var player = response.seasons[seasonKeys[seasonKeys.length - 1]].emea;
 			
 			if(player) {
 				var ranks = ["Copper 1", "Copper 2", "Copper 3", "Copper 4",
