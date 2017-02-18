@@ -97,23 +97,59 @@ var statsFunctions = {
 			var player = response.seasons[seasonKeys[seasonKeys.length - 1]].emea;
 			
 			if(player) {
-				var ranks = ["Copper 1", "Copper 2", "Copper 3", "Copper 4",
-							 "Bronze 1", "Bronze 2", "Bronze 3", "Bronze 4",
-							 "Silver 1", "Silver 2", "Silver 3", "Silver 4", 
-							 "Gold 1", "Gold 2", "Gold 3", "Gold 4", 
-							 "Platinum 1", "Platinum 2", "Platinum 3",
-							 "Diamond"];
-				var toNextRank = "Хоп, задрот!";
+				var ranks = ["unrated", 
+					    	"Liquid Copper", 
+						"Copper", 
+						"Copper",
+						"Copper", 
+						"Real Copper", 
+						"Strong Copper", 
+						"Practically not a Copper",
+						"Almost not a Copper",
+						"Liquid Bronze",
+						"Bronze ",
+						"Silver", 
+						"Gold VI", 
+						"Gold III", 
+						"Gold II", 
+						"Gold Star", 
+						"Platinum III",
+						"Platinum III", 
+						"Platinum II",
+						"Platinum II", 
+						"Platinum Star",
+						"Platinum Star",
+						"Diamond"];
+				
+				var toDayRank = ranks[(player.ranking.rating / 200).toFixed(0)];
+				if ((player.ranking.rating / 200).toFixed(0) > 22){
+					toDayRank = "Читор";
+				}
+
+				var toNextRank = "Пиздуй в ESL, читор!";
 				if (player.ranking.rank != 20) {
-					toNextRank = (player.ranking.next_rating - player.ranking.rating).toFixed(0);
+					toNextRank = " .Points to next Rank: " + (player.ranking.next_rating - player.ranking.rating).toFixed(0);
+				} 
+
+				var toNextExpRank = "";	
+				var toGetRankGames = "";
+				var isRated	= "";
+				if (player.ranking.rank == 0) {
+							toNextRank = "";
+							isRated = "unrated, expected rank is ";
+							toGetRankGames = "Games to get rank: " + (10 - player.wins - player.losses - player.abandons) + ". ";
+							toNextExpRank = "Points to next expected Rank: " + (200 - ((player.ranking.rating + 100) % 200)).toFixed(0);
+							if ((player.ranking.rating / 200).toFixed(0) > 16){
+							toNextExpRank = "Points to next expected Rank: " + (400 - ((player.ranking.rating + 100) % 400)).toFixed(0);
+							}
 				} 
 
 				var returnMessage = "```Markdown\n"
 				+ "#Current season " + seasonKeys[0] + " info\n"
 				+ "* Wins: " + player.wins + "\n"
 				+ "* Losses: " + player.losses + "\n"
-				+ "* Rank: " + ranks[player.ranking.rank - 1] + "\n"
-				+ "* To next Rank: " + toNextRank
+				+ "* Rank: " + isRated + toDayRank + toNextRank + "\n"
+				+  toGetRankGames + toNextExpRank
 				+ "```";
 				msg.reply(returnMessage)
 				console.log(player);
