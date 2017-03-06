@@ -97,63 +97,68 @@ var statsFunctions = {
 			var player = response.seasons[seasonKeys[seasonKeys.length - 1]].emea;
 			
 			if(player) {
-				var ranks = ["unrated", 
-					    	"Liquid Copper", 
-						"Copper", 
-						"Copper",
-						"Copper", 
-						"Real Copper", 
-						"Strong Copper", 
-						"Practically not a Copper",
-						"Almost not a Copper",
-						"Liquid Bronze",
-						"Bronze ",
-						"Silver", 
-						"Gold VI", 
-						"Gold III", 
-						"Gold II", 
-						"Gold Star", 
-						"Platinum III",
-						"Platinum III", 
-						"Platinum II",
-						"Platinum II", 
-						"Platinum Star",
-						"Platinum Star",
-						"Diamond"];
+				var ranks = { 
+							1000: "Bottom", 
+							1300: "Copper VI", 
+							1400: "Copper III", 
+							1500: "Copper II",
+							1600: "Copper Star", 
+							1700: "Bronze VI",
+							1800: "Bronze III",
+							1900: "Bronze II",
+							2000: "Bronze Star",
+							2100: "Silver VI", 
+							2200: "Silver III",
+							2300: "Silver II",
+							2400: "Silver Star",
+							2500: "Gold VI", 
+							2700: "Gold III", 
+							2900: "Gold II", 
+							3100: "Gold Star", 
+							3300: "Platinum III",
+							3700: "Platinum II",
+							4100: "Platinum Star",
+							4500: "Diamond",
+							8000: "Cheater"};
+
+				function InterpolaitRank (R)  {   
+					var mas = Object.keys(ranks);
+					var mid, low = 0, high = mas.length - 1;
+   				 	while (mas[low] < R && mas[high] > R)
+
+   					{  mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
+      				 if (mas[mid] < R) low = mid+1;
+       					else if (mas[mid] > R) high = mid-1;
+       						else  ranks[mas[mid]];
+    				}
+    				this.currentRank = ranks[mas[mid]];
+    				this.toNextRank = Math.round(mas[mid + 1] - R);
+					}
+
+				var playerRank = new InterpolaitRank(player.ranking.rating);	
 				
-				var toDayRank = ranks[(player.ranking.rating / 200).toFixed(0)];
-				if ((player.ranking.rating / 200).toFixed(0) > 22){
-					toDayRank = "Читор";
-				}
-
-				var toNextRank = "Пиздуй в ESL, читор!";
-				if (player.ranking.rank != 20) {
-					toNextRank = " .Points to next Rank: " + (player.ranking.next_rating - player.ranking.rating).toFixed(0);
+				if (player.ranking.rank == 20) {    //чисто декоративная опция
+					playerRank.toNextRank = "Выше головы не прыгнешь!";
 				} 
 
-				var toNextExpRank = "";	
-				var toGetRankGames = "";
-				var isRated	= "";
 				if (player.ranking.rank == 0) {
-							toNextRank = "";
-							isRated = "unrated, expected rank is ";
-							toGetRankGames = "Games to get rank: " + (10 - player.wins - player.losses - player.abandons) + ". ";
-							toNextExpRank = "Points to next expected Rank: " + (200 - ((player.ranking.rating + 100) % 200)).toFixed(0);
-							if ((player.ranking.rating / 200).toFixed(0) > 16){
-							toNextExpRank = "Points to next expected Rank: " + (400 - ((player.ranking.rating + 100) % 400)).toFixed(0);
-							}
-				} 
-
-				var returnMessage = "```Markdown\n"
-				+ "#Current season " + seasonKeys[0] + " info\n"
-				+ "* Wins: " + player.wins + "\n"
-				+ "* Losses: " + player.losses + "\n"
-				+ "* Rank: " + isRated + toDayRank + toNextRank + "\n"
-				+  toGetRankGames + toNextExpRank
-				+ "```";
-				msg.reply(returnMessage)
+							var returnMessage = "```Markdown\n"
+							+ "* Wins: " + player.wins + "\n"
+							+ "* Losses: " + player.losses + "\n"
+							+ "* Rank: unrated, expected rank is " + playerRank.currentRank  + "\n" 
+							+ "* Points to next Rank: " + playerRank.toNextRank + "\n"      
+							+ "* Games to get rank: " + (10 - player.wins - player.losses - player.abandons) + ". "
+							+ "```";
+							} else {
+								var returnMessage = "```Markdown\n"
+								+ "* Wins: " + player.wins + "\n"
+								+ "* Losses: " + player.losses + "\n"
+								+ "* Rank: " + playerRank.currentRank  + "\n" 
+								+ "* Points to next Rank: " + playerRank.toNextRank + "\n"  
+								+ "```";
 				console.log(player);
-			} else {
+				msg.reply(returnMessage);
+			}  else {
 				msg.reply("Can't find seasonal info for [" + suffix +"]")
 			}
 		});
