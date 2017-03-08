@@ -103,15 +103,15 @@ var statsFunctions = {
 							1400: "Copper III", 
 							1500: "Copper II",
 							1600: "Copper Star", 
-							1700: "Bronze VI",
+							1700: "Bronze IV",
 							1800: "Bronze III",
 							1900: "Bronze II",
 							2000: "Bronze Star",
-							2100: "Silver VI", 
+							2100: "Silver IV", 
 							2200: "Silver III",
 							2300: "Silver II",
 							2400: "Silver Star",
-							2500: "Gold VI", 
+							2500: "Gold IV", 
 							2700: "Gold III", 
 							2900: "Gold II", 
 							3100: "Gold Star", 
@@ -141,23 +141,23 @@ var statsFunctions = {
 					playerRank.toNextRank = "Выше головы не прыгнешь!";
 				} 
 
-				if (player.ranking.rank == 0) {
-							var returnMessage = "```Markdown\n"
+				var firstReturnMessage = "```Markdown\n"
 							+ "* Wins: " + player.wins + "\n"
 							+ "* Losses: " + player.losses + "\n"
-							+ "* Rank: unrated, expected rank is " + playerRank.currentRank  + "\n" 
+
+				if (player.ranking.rank == 0) {
+							var secondReturnMessage = 
+							"* Rank: unrated, expected rank is " + playerRank.currentRank  + "\n" 
 							+ "* Points to next Rank: " + playerRank.toNextRank + "\n"      
 							+ "* Games to get rank: " + (10 - player.wins - player.losses - player.abandons) + ". "
 							+ "```";
 							} else {
-								var returnMessage = "```Markdown\n"
-								+ "* Wins: " + player.wins + "\n"
-								+ "* Losses: " + player.losses + "\n"
-								+ "* Rank: " + playerRank.currentRank  + "\n" 
+								var secondReturnMessage = 
+								"* Rank: " + playerRank.currentRank  + "\n" 
 								+ "* Points to next Rank: " + playerRank.toNextRank + "\n"  
 								+ "```";
 				console.log(player);
-				msg.reply(returnMessage);
+				msg.reply(firstReturnMessage + secondReturnMessage);
 			}  else {
 				msg.reply("Can't find seasonal info for [" + suffix +"]")
 			}
