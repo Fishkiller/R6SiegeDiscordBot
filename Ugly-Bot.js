@@ -99,7 +99,7 @@ var statsFunctions = {
 			if(player) {
 				var ranks = { 
 							1000: "Bottom", 
-							1300: "Copper VI", 
+							1300: "Copper IV", 
 							1400: "Copper III", 
 							1500: "Copper II",
 							1600: "Copper Star", 
@@ -129,45 +129,42 @@ var statsFunctions = {
 
 					var mas = Object.keys(ranks); //интерполяция текущего ранка по рейтингу
 					var mid, low = 0, high = mas.length - 1;
-   				 	while (mas[low] < R && mas[high] > R)
-   					{  mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
-      				 if (mas[mid] < R) low = mid+1;
-       					else if (mas[mid] > R) high = mid-1;
+   				 	while (mas[low] < R && mas[high] > R) {  
+   				 		mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
+      				 	if (mas[mid] < R) low = mid+1;
+       						else if (mas[mid] > R) high = mid-1;
        						else  ranks[mas[mid]];
     				}
+
     				this.currentRank = ranks[mas[mid]]; //текущий ранк
 
     				if (player.ranking.rank == 20) {    
-					this.toNextRank = "Выше головы не прыгнешь!";  //поинтов до следующего ранка
-					}  
-						else {this.toNextRank = Math.round(mas[mid + 1] - R);
-						}
-					this.gamesToGetRank = (10 - player.wins - player.losses - player.abandons);	
+						this.toNextRank = "Выше головы не прыгнешь!";  //поинтов до следующего ранка
+					} else {
+						this.toNextRank = Math.round(mas[mid + 1] - R);
 					}
+
+					this.gamesToGetRank = (10 - player.wins - player.losses - player.abandons);	
+				}
 
 				var thisPlayer = new StatisticConstructor(player.ranking.rating);//создаем новый объект со статистикой игрока
 
-				var firstReturnMessage = "```Markdown\n"
+				var returnMessage = "```Markdown\n"
 							+ "* Wins: " + thisPlayer.wins + "\n"
 							+ "* Losses: " + thisPlayer.losses + "\n"
-							+ "* Losses: " + thisPlayer.abandons + "\n"
+							+ "* Abandons: " + thisPlayer.abandons + "\n"
 							+ "* Win Rate: " + thisPlayer.winrate + "\n";
 
-				var secondReturnMessage;
 				if (player.ranking.rank == 0) {
-							secondReturnMessage = 
-							"* Rank: unrated, expected rank is " + thisPlayer.currentRank  + "\n" 
-							+ "* Points to next Rank: " + thisPlayer.toNextRank + "\n"      
-							+ "* Games to get rank: " + thisPlayer.gamesToGetRank + ". "
-							+ "```";
-							} else {
-								secondReturnMessage = 
-								"* Rank: " + thisPlayer.currentRank  + "\n" 
-								+ "* Points to next Rank: " + thisPlayer.toNextRank + "\n"  
-								+ "```";
-							}
+					returnMessage += "* Rank: unrated, expected rank is " + thisPlayer.currentRank  + "\n"       
+							+ "* Games to get rank: " + thisPlayer.gamesToGetRank + "\n";
+				} else {
+					returnMessage += "* Rank: " + thisPlayer.currentRank  + "\n";
+				}
+
+				returnMessage += "* Points to next Rank: " + thisPlayer.toNextRank + "```";
 				console.log(player);
-				msg.reply(firstReturnMessage + secondReturnMessage);
+				msg.reply(returnMessage);
 			}  else {
 				msg.reply("Can't find seasonal info for [" + suffix +"]")
 			}
