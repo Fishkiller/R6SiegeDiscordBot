@@ -98,20 +98,20 @@ var statsFunctions = {
 			
 			if(player) {
 				var ranks = { 
-							0: "Bottom", 
-							100: "Copper VI", 
-							500: "Copper III", 
-							900: "Copper II",
-							1300: "Copper Star", 
-							1700: "Bronze VI",
+							1000: "Bottom",
+							1300: "Copper IV", 
+							1400: "Copper III", 
+							1500: "Copper II",
+							1600: "Copper Star", 
+							1700: "Bronze IV",
 							1800: "Bronze III",
 							1900: "Bronze II",
 							2000: "Bronze Star",
-							2100: "Silver VI", 
+							2100: "Silver IV", 
 							2200: "Silver III",
 							2300: "Silver II",
 							2400: "Silver Star",
-							2500: "Gold VI", 
+							2500: "Gold IV", 
 							2700: "Gold III", 
 							2900: "Gold II", 
 							3100: "Gold Star", 
@@ -119,47 +119,50 @@ var statsFunctions = {
 							3700: "Platinum II",
 							4100: "Platinum Star",
 							4500: "Diamond",
-							100000: "Cheater"};
+							8000: "Cheater"};
 
-				function interpolaitRank(R)  {   //итерпоялционный поиск по масссиву сформированнуму из объекта
-					var mas = Object.keys(ranks);
+				function StatisticConstructor (R)  {  
+					this.wins = player.wins; //выигранных игр
+					this.losses = player.losses; //проигранных игр
+					this.winrate = (Math.round( 100 * player.wins / player.losses))/100;
+					this.abandons = player.abandons; //брошенных игр
+
+					var mas = Object.keys(ranks); //интерполяция текущего ранка по рейтингу
 					var mid, low = 0, high = mas.length - 1;
-   				 	while (mas[low] < R && mas[high] > R)
-
-   					{  mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
-      				 if (mas[mid] < R) low = mid+1;
-       					else if (mas[mid] > R) high = mid;
-       						else return ranks[mas[mid]];
+   				 	while (mas[low] < R && mas[high] > R) {  
+   				 		mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
+      				 	if (mas[mid] < R) low = mid+1;
+       						else if (mas[mid] > R) high = mid-1;
+       						else  ranks[mas[mid]];
     				}
-    				toNextRank = Math.floor(mas[mid + 1] - player.ranking.rating); // нужно для вычисления поинтов до следующего звания
-    				return ranks[mas[mid]];   
+
+    				this.currentRank = ranks[mas[mid]]; //текущий ранк
+
+    				if (player.ranking.rank == 20) {    
+						this.toNextRank = "Выше головы не прыгнешь!";  //поинтов до следующего ранка
+					} else {
+						this.toNextRank = Math.round(mas[mid + 1] - R);
 					}
- 
-				
-				var currentRank	= interpolaitRank(player.ranking.rating);
 
-				var toNextRank;	
-				if (player.ranking.rank == 20) {    //декоративная опция
-					var toNextRank = "Выше головы не прыгнешь!";
-				} 
+					this.gamesToGetRank = (10 - player.wins - player.losses - player.abandons);	
+				}
 
-				var toGetRankGames = ""; //отсюда пошли переменные которые видны пользователю только если он не имеет ранка.
-				var isRated	= "";
-				var numberOfGames = "";
-				if (player.ranking.rank == 0) {
-							isRated = "unrated, expected rank is ";
-							numberOfGames = 10 - player.wins - player.losses - player.abandons;
-							toGetRankGames = "* Games to get rank: ";
-							}
-
+				var thisPlayer = new StatisticConstructor(player.ranking.rating);//создаем новый объект со статистикой игрока
 
 				var returnMessage = "```Markdown\n"
-				+ "#Current season " + seasonKeys[0] + " info\n"
-				+ "* Wins: " + player.wins + "\n"
-				+ "* Losses: " + player.losses + "\n"
-				+ "* Rank: " + isRated + currentRank  + "\n" 
-				+ "* Points to next Rank: " + toNextRank + "\n"          
-				+ toGetRankGames + numberOfGames + ". ";
+							+ "* Wins: " + thisPlayer.wins + "\n"
+							+ "* Losses: " + thisPlayer.losses + "\n"
+							+ "* Abandons: " + thisPlayer.abandons + "\n"
+							+ "* Win Rate: " + thisPlayer.winrate + "\n";
+
+				if (player.ranking.rank == 0) {
+					returnMessage += "* Rank: unrated, expected rank is " + thisPlayer.currentRank  + "\n"       
+							+ "* Games to get rank: " + thisPlayer.gamesToGetRank + "\n";
+				} else {
+					returnMessage += "* Rank: " + thisPlayer.currentRank  + "\n";
+				}
+
+				returnMessage += "* Points to next Rank: " + thisPlayer.toNextRank + "```";
 				console.log(player);
 				msg.reply(returnMessage);
 			}  else {
