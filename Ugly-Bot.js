@@ -98,7 +98,7 @@ var statsFunctions = {
 			
 			if(player) {
 				var ranks = { 
-							1000: "Bottom", 
+							1000: "Bottom",
 							1300: "Copper IV", 
 							1400: "Copper III", 
 							1500: "Copper II",
