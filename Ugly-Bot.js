@@ -98,8 +98,8 @@ var statsFunctions = {
 			
 			if(player) {
 				var ranks = { 
-							1000: "Bottom", 
-							1300: "Copper VI", 
+							1000: "Bottom",
+							1300: "Copper IV", 
 							1400: "Copper III", 
 							1500: "Copper II",
 							1600: "Copper Star", 
@@ -121,43 +121,50 @@ var statsFunctions = {
 							4500: "Diamond",
 							8000: "Cheater"};
 
-				function InterpolaitRank (R)  {   
-					var mas = Object.keys(ranks);
-					var mid, low = 0, high = mas.length - 1;
-   				 	while (mas[low] < R && mas[high] > R)
+				function StatisticConstructor (R)  {  
+					this.wins = player.wins; //выигранных игр
+					this.losses = player.losses; //проигранных игр
+					this.winrate = (Math.round( 100 * player.wins / player.losses))/100;
+					this.abandons = player.abandons; //брошенных игр
 
-   					{  mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
-      				 if (mas[mid] < R) low = mid+1;
-       					else if (mas[mid] > R) high = mid-1;
+					var mas = Object.keys(ranks); //интерполяция текущего ранка по рейтингу
+					var mid, low = 0, high = mas.length - 1;
+   				 	while (mas[low] < R && mas[high] > R) {  
+   				 		mid = low + Math.floor( ((R-mas[low])*(high-low))/(mas[high]-mas[low]) );
+      				 	if (mas[mid] < R) low = mid+1;
+       						else if (mas[mid] > R) high = mid-1;
        						else  ranks[mas[mid]];
     				}
-    				this.currentRank = ranks[mas[mid]];
-    				this.toNextRank = Math.round(mas[mid + 1] - R);
+
+    				this.currentRank = ranks[mas[mid]]; //текущий ранк
+
+    				if (player.ranking.rank == 20) {    
+						this.toNextRank = "Выше головы не прыгнешь!";  //поинтов до следующего ранка
+					} else {
+						this.toNextRank = Math.round(mas[mid + 1] - R);
 					}
 
-				var playerRank = new InterpolaitRank(player.ranking.rating);	
-				
-				if (player.ranking.rank == 20) {    //чисто декоративная опция
-					playerRank.toNextRank = "Выше головы не прыгнешь!";
-				} 
+					this.gamesToGetRank = (10 - player.wins - player.losses - player.abandons);	
+				}
 
-				var firstReturnMessage = "```Markdown\n"
-							+ "* Wins: " + player.wins + "\n"
-							+ "* Losses: " + player.losses + "\n"
+				var thisPlayer = new StatisticConstructor(player.ranking.rating);//создаем новый объект со статистикой игрока
+
+				var returnMessage = "```Markdown\n"
+							+ "* Wins: " + thisPlayer.wins + "\n"
+							+ "* Losses: " + thisPlayer.losses + "\n"
+							+ "* Abandons: " + thisPlayer.abandons + "\n"
+							+ "* Win Rate: " + thisPlayer.winrate + "\n";
 
 				if (player.ranking.rank == 0) {
-							var secondReturnMessage = 
-							"* Rank: unrated, expected rank is " + playerRank.currentRank  + "\n" 
-							+ "* Points to next Rank: " + playerRank.toNextRank + "\n"      
-							+ "* Games to get rank: " + (10 - player.wins - player.losses - player.abandons) + ". "
-							+ "```";
-							} else {
-								var secondReturnMessage = 
-								"* Rank: " + playerRank.currentRank  + "\n" 
-								+ "* Points to next Rank: " + playerRank.toNextRank + "\n"  
-								+ "```";
+					returnMessage += "* Rank: unrated, expected rank is " + thisPlayer.currentRank  + "\n"       
+							+ "* Games to get rank: " + thisPlayer.gamesToGetRank + "\n";
+				} else {
+					returnMessage += "* Rank: " + thisPlayer.currentRank  + "\n";
+				}
+
+				returnMessage += "* Points to next Rank: " + thisPlayer.toNextRank + "```";
 				console.log(player);
-				msg.reply(firstReturnMessage + secondReturnMessage);
+				msg.reply(returnMessage);
 			}  else {
 				msg.reply("Can't find seasonal info for [" + suffix +"]")
 			}
