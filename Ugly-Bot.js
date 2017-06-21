@@ -19,6 +19,12 @@ var app = express();
 
 var bot = new Discord.Client();
 
+//greeting
+bot.on('guildMemberAdd', member => {
+  member.dmChannel.send(`Привет, ${member} , я - местный бот! 
+  	Я показываю статистику игроков Rainbow 6 Siege, а так же сообщаю свежие игровые новости.
+Напиши в чат: !help чтобы узнать что я умею!`);
+
 var statsPrintFunctions = {
 	printOperator : function(operator) {
 		var keys = Object.keys(operator.stats.specials);
